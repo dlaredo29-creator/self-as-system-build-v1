@@ -607,7 +607,7 @@ function updateObjects() {
         sigil gets within 50 pixels of them.
     */
 
-    const CONTACT_RANGE = 50;
+    const CONTACT_RANGE = 12;
 
 
     /*
@@ -617,7 +617,7 @@ function updateObjects() {
         push each other.
     */
 
-    const BLOCK_PUSH = 0.28;
+    const BLOCK_PUSH = 0.5;
 
 
     /*
@@ -693,8 +693,8 @@ function updateObjects() {
             const strength =
                 distance <
                 minimumDistance
-                    ? 0.8
-                    : 0.25;
+                    ? 1.5
+                    : 2;
 
 
             object.vx +=
