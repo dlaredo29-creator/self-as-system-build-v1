@@ -12,7 +12,7 @@
       ↓
  OBJECT REACTION
       ↓
- TEMPORARY GLOW
+ BLOCK-TO-BLOCK CONTACT
 
    Visual Register
 
@@ -35,7 +35,6 @@ const CYAN = "#8FE8FF";
 
 const canvas = document.getElementById("systemCanvas");
 const ctx = canvas.getContext("2d");
-
 
 let width = 0;
 let height = 0;
@@ -109,7 +108,7 @@ const sigil = {
 
 
 /* =========================================
-   OBJECTS
+   OBJECTS / BLOCKS
 ========================================= */
 
 const objects = [
@@ -117,72 +116,54 @@ const objects = [
     {
         x: 0,
         y: 0,
-
         size: 52,
-
         vx: 0,
         vy: 0,
-
         glow: 0
     },
 
     {
         x: 0,
         y: 0,
-
         size: 42,
-
         vx: 0,
         vy: 0,
-
         glow: 0
     },
 
     {
         x: 0,
         y: 0,
-
         size: 60,
-
         vx: 0,
         vy: 0,
-
         glow: 0
     },
 
     {
         x: 0,
         y: 0,
-
         size: 36,
-
         vx: 0,
         vy: 0,
-
         glow: 0
     },
 
     {
         x: 0,
         y: 0,
-
         size: 48,
-
         vx: 0,
         vy: 0,
-
         glow: 0
     },
 
     {
         x: 0,
         y: 0,
-
         size: 40,
-
         vx: 0,
         vy: 0,
-
         glow: 0
     }
 
@@ -221,6 +202,19 @@ function initializeObjects() {
 
     objects[5].x = width * 0.80;
     objects[5].y = height * 0.62;
+
+    /*
+        Reset block velocity and glow
+        when the canvas is resized.
+    */
+
+    for (const object of objects) {
+
+        object.vx = 0;
+        object.vy = 0;
+        object.glow = 0;
+
+    }
 }
 
 
@@ -502,22 +496,28 @@ function drawObject(object) {
     const half =
         object.size / 2;
 
-
     ctx.save();
 
 
     /* -------------------------------------
        Contact glow
+
+       The glow fades gradually because
+       object.glow is continuously reduced
+       in updateObjects().
     ------------------------------------- */
 
-    if (object.glow > 0) {
+    if (object.glow > 0.001) {
 
         ctx.shadowColor = CYAN;
 
         ctx.shadowBlur =
-            12 + object.glow * 30;
+            10 + object.glow * 30;
 
         ctx.strokeStyle = CYAN;
+
+        ctx.globalAlpha =
+            0.45 + object.glow * 0.55;
 
     } else {
 
@@ -525,6 +525,8 @@ function drawObject(object) {
 
         ctx.strokeStyle =
             "rgba(83,96,102,0.8)";
+
+        ctx.globalAlpha = 1;
     }
 
 
@@ -544,24 +546,27 @@ function drawObject(object) {
 
 
     /* -------------------------------------
-       Inner mark
+       Inner contact point
     ------------------------------------- */
 
-    ctx.globalAlpha =
-        object.glow * 0.5;
+    if (object.glow > 0.01) {
 
+        ctx.globalAlpha =
+            object.glow * 0.5;
 
-    ctx.beginPath();
+        ctx.beginPath();
 
-    ctx.arc(
-        object.x,
-        object.y,
-        3,
-        0,
-        Math.PI * 2
-    );
+        ctx.arc(
+            object.x,
+            object.y,
+            3,
+            0,
+            Math.PI * 2
+        );
 
-    ctx.stroke();
+        ctx.stroke();
+
+    }
 
 
     ctx.restore();
@@ -596,14 +601,30 @@ function distanceBetween(
 function updateObjects() {
 
     /*
-        Tightened contact rule:
+        SIGIL CONTACT RANGE
 
-        Objects react only when the
-        sigil comes within this range.
+        Objects begin reacting when the
+        sigil gets within 50 pixels of them.
     */
 
     const CONTACT_RANGE = 50;
 
+
+    /*
+        BLOCK COLLISION STRENGTH
+
+        This controls how strongly blocks
+        push each other.
+    */
+
+    const BLOCK_PUSH = 0.28;
+
+
+    /*
+        LOOP 1
+        -------------------------------
+        Sigil → blocks
+    */
 
     for (const object of objects) {
 
@@ -627,7 +648,7 @@ function updateObjects() {
 
 
         /* ---------------------------------
-           CONTACT
+           SIGIL CONTACT
         --------------------------------- */
 
         if (
@@ -635,13 +656,16 @@ function updateObjects() {
             minimumDistance + CONTACT_RANGE
         ) {
 
+            /*
+                Set glow to full brightness
+                whenever contact happens.
+
+                It will then slowly fade
+                instead of instantly disappearing.
+            */
+
             object.glow = 1;
 
-
-            /*
-                Push the object away
-                from the sigil.
-            */
 
             let angle;
 
@@ -661,6 +685,11 @@ function updateObjects() {
             }
 
 
+            /*
+                Stronger push when actual
+                physical contact happens.
+            */
+
             const strength =
                 distance <
                 minimumDistance
@@ -676,12 +705,166 @@ function updateObjects() {
             object.vy +=
                 Math.sin(angle) *
                 strength;
+        }
+    }
+
+
+    /*
+        LOOP 2
+        -------------------------------
+        Block → block
+
+        Every block checks every other
+        block for collision.
+    */
+
+    for (
+        let i = 0;
+        i < objects.length;
+        i++
+    ) {
+
+        for (
+            let j = i + 1;
+            j < objects.length;
+            j++
+        ) {
+
+            const a = objects[i];
+            const b = objects[j];
+
+
+            const dx =
+                b.x - a.x;
+
+            const dy =
+                b.y - a.y;
+
+
+            const distance =
+                Math.sqrt(
+                    dx * dx +
+                    dy * dy
+                );
+
+
+            /*
+                Each block is treated as
+                a circle for collision math.
+            */
+
+            const minimumDistance =
+                (a.size / 2) +
+                (b.size / 2);
+
+
+            if (
+                distance <
+                minimumDistance
+            ) {
+
+                /*
+                    Make both blocks glow.
+                */
+
+                a.glow = 1;
+                b.glow = 1;
+
+
+                let angle;
+
+                if (distance > 0.001) {
+
+                    angle =
+                        Math.atan2(
+                            dy,
+                            dx
+                        );
+
+                } else {
+
+                    angle =
+                        Math.random() *
+                        Math.PI * 2;
+                }
+
+
+                const pushX =
+                    Math.cos(angle) *
+                    BLOCK_PUSH;
+
+                const pushY =
+                    Math.sin(angle) *
+                    BLOCK_PUSH;
+
+
+                /*
+                    Push A away from B.
+                */
+
+                a.vx -= pushX;
+                a.vy -= pushY;
+
+
+                /*
+                    Push B away from A.
+                */
+
+                b.vx += pushX;
+                b.vy += pushY;
+
+
+                /*
+                    Separate overlapping blocks.
+
+                    This prevents two blocks from
+                    becoming permanently stuck
+                    inside each other.
+                */
+
+                const overlap =
+                    minimumDistance -
+                    distance;
+
+
+                if (distance > 0.001) {
+
+                    const separationX =
+                        Math.cos(angle) *
+                        overlap *
+                        0.5;
+
+                    const separationY =
+                        Math.sin(angle) *
+                        overlap *
+                        0.5;
+
+
+                    a.x -= separationX;
+                    a.y -= separationY;
+
+
+                    b.x += separationX;
+                    b.y += separationY;
+                }
+
+            }
 
         }
 
+    }
+
+
+    /*
+        LOOP 3
+        -------------------------------
+        Apply movement and fade glow.
+    */
+
+    for (const object of objects) {
 
         /* ---------------------------------
-           MOVEMENT
+           Movement
         --------------------------------- */
 
         object.x += object.vx;
@@ -689,7 +872,7 @@ function updateObjects() {
 
 
         /* ---------------------------------
-           FRICTION
+           Friction
         --------------------------------- */
 
         object.vx *= 0.94;
@@ -697,8 +880,15 @@ function updateObjects() {
 
 
         /* ---------------------------------
-           GLOW DECAY
-        --------------------------------- */
+           SLOW GLOW FADE
+        ---------------------------------
+
+           0.92 means the glow decreases
+           gradually every frame.
+
+           Lower number = faster fade.
+           Higher number = slower fade.
+        */
 
         object.glow *= 0.92;
 
@@ -764,8 +954,6 @@ function updateSigil() {
 
     /*
         Smooth mouse following.
-        This keeps movement direct while
-        giving the sigil a slight physical feel.
     */
 
     sigil.x +=
@@ -859,11 +1047,6 @@ function updateSigil() {
 
 function updateTrail() {
 
-    /*
-        The trail is atmosphere only.
-        It does not affect behavior.
-    */
-
     trail.push({
 
         x: sigil.x,
@@ -899,7 +1082,9 @@ function updateTrail() {
 function drawTrail() {
 
     if (trail.length < 2) {
+
         return;
+
     }
 
 
@@ -942,8 +1127,7 @@ function drawTrail() {
             `rgba(143,232,255,${progress * 0.12})`;
 
 
-        ctx.lineWidth =
-            1;
+        ctx.lineWidth = 1;
 
 
         ctx.stroke();
@@ -1013,6 +1197,7 @@ function drawCenterField() {
             width / 2,
             height / 2,
             0,
+
             width / 2,
             height / 2,
             Math.max(width, height) * 0.45
@@ -1070,7 +1255,7 @@ function draw() {
 
 
     /* -------------------------------------
-       Update
+       UPDATE
     ------------------------------------- */
 
     updateSigil();
@@ -1081,14 +1266,14 @@ function draw() {
 
 
     /* -------------------------------------
-       Trail
+       TRAIL
     ------------------------------------- */
 
     drawTrail();
 
 
     /* -------------------------------------
-       Objects
+       OBJECTS
     ------------------------------------- */
 
     for (const object of objects) {
@@ -1099,7 +1284,7 @@ function draw() {
 
 
     /* -------------------------------------
-       Sigil
+       SIGIL
     ------------------------------------- */
 
     drawSigil(
@@ -1117,7 +1302,7 @@ function draw() {
 
 
     /* -------------------------------------
-       Vignette
+       VIGNETTE
     ------------------------------------- */
 
     drawVignette();
@@ -1128,7 +1313,7 @@ function draw() {
 
 
 /* =========================================
-   RESIZE HANDLER
+   RESIZE
 ========================================= */
 
 window.addEventListener(
@@ -1139,14 +1324,7 @@ window.addEventListener(
 
         initializeObjects();
 
-        if (
-            sigil.x === 0 &&
-            sigil.y === 0
-        ) {
-
-            initializeSigil();
-
-        }
+        initializeSigil();
 
     }
 );
