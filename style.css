@@ -1,0 +1,369 @@
+/* =========================================
+   CONTACT
+   SYSTEM BUILD v1
+
+   Visual Register
+
+   Background: #050509
+   Accent:     #8FE8FF
+========================================= */
+
+
+/* =========================================
+   RESET
+========================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: #050509;
+    color: #e8faff;
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+}
+
+
+/* =========================================
+   PAGE
+========================================= */
+
+.page {
+    width: min(1200px, 94%);
+    margin: 0 auto;
+}
+
+
+/* =========================================
+   ARTWORK
+========================================= */
+
+.artwork {
+    position: relative;
+    width: 100%;
+    height: min(72vh, 720px);
+    min-height: 500px;
+
+    margin-top: 30px;
+
+    overflow: hidden;
+
+    border: 1px solid #171c1e;
+
+    background: #050509;
+}
+
+#systemCanvas {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    cursor: crosshair;
+}
+
+
+/* =========================================
+   ARTWORK LABELS
+========================================= */
+
+.artwork-label {
+    position: absolute;
+
+    top: 20px;
+    left: 22px;
+
+    color: #8FE8FF;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    letter-spacing: 3px;
+
+    pointer-events: none;
+}
+
+.interaction-hint {
+    position: absolute;
+
+    right: 22px;
+    bottom: 20px;
+
+    color: #465155;
+
+    font-size: 9px;
+    letter-spacing: 2px;
+
+    pointer-events: none;
+
+    transition:
+        color 0.3s ease,
+        opacity 0.3s ease;
+}
+
+.artwork:hover .interaction-hint {
+    color: #687a7f;
+}
+
+
+/* =========================================
+   INFORMATION PANEL
+========================================= */
+
+.info-panel {
+    padding: 65px 10px 80px;
+}
+
+
+/* =========================================
+   SYSTEM HEADER
+========================================= */
+
+.system-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    padding-bottom: 35px;
+
+    border-bottom: 1px solid #171c1e;
+}
+
+.eyebrow {
+    margin: 0 0 12px;
+
+    color: #8FE8FF;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    letter-spacing: 4px;
+}
+
+.system-header h1 {
+    margin: 0;
+
+    color: #f2fcff;
+
+    font-size: clamp(42px, 7vw, 72px);
+    font-weight: 300;
+
+    letter-spacing: 10px;
+}
+
+.version {
+    margin: 0;
+
+    color: #4d5b5f;
+
+    font-size: 12px;
+
+    letter-spacing: 3px;
+}
+
+
+/* =========================================
+   PANEL GRID
+========================================= */
+
+.panel-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 80px;
+
+    padding: 45px 0;
+
+    border-bottom: 1px solid #171c1e;
+}
+
+
+/* =========================================
+   PANEL SECTIONS
+========================================= */
+
+.panel-section {
+    min-width: 0;
+}
+
+.section-label {
+    margin: 0 0 20px;
+
+    color: #8FE8FF;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    letter-spacing: 3px;
+}
+
+
+/* =========================================
+   RULES
+========================================= */
+
+.rules {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.rules li {
+    position: relative;
+
+    margin-bottom: 15px;
+    padding-left: 20px;
+
+    color: #839196;
+
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.rules li::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 9px;
+
+    width: 5px;
+    height: 5px;
+
+    border: 1px solid #8FE8FF;
+
+    border-radius: 50%;
+}
+
+
+/* =========================================
+   CONTROLS
+========================================= */
+
+.controls {
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+.control {
+    display: grid;
+
+    grid-template-columns: 70px 1fr;
+
+    gap: 18px;
+
+    align-items: start;
+}
+
+.control-key {
+    color: #b9dce4;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    letter-spacing: 2px;
+}
+
+.control-description {
+    color: #68767a;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================
+   REFLECTION
+========================================= */
+
+.reflection {
+    padding-top: 45px;
+}
+
+.reflection-text {
+    max-width: 780px;
+}
+
+.reflection-text p {
+    margin: 0 0 18px;
+
+    color: #7c898e;
+
+    font-size: 13px;
+
+    line-height: 1.9;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+    width: min(1200px, 94%);
+
+    margin: 0 auto;
+
+    padding: 0 10px 40px;
+
+    display: flex;
+    justify-content: space-between;
+
+    color: #3e484b;
+
+    font-size: 9px;
+
+    letter-spacing: 3px;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+    .page {
+        width: 94%;
+    }
+
+    .artwork {
+        height: 70vh;
+        min-height: 430px;
+
+        margin-top: 15px;
+    }
+
+    .info-panel {
+        padding-top: 45px;
+    }
+
+    .panel-grid {
+        grid-template-columns: 1fr;
+
+        gap: 45px;
+    }
+
+    .system-header h1 {
+        letter-spacing: 7px;
+    }
+
+    footer {
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+}

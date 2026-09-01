@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Contact — System Build v1</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="page">
+
+        <!-- =========================================
+             ARTWORK
+        ========================================== -->
+
+        <section class="artwork">
+
+            <canvas id="systemCanvas"></canvas>
+
+            <div class="artwork-label">
+                CONTACT / V1
+            </div>
+
+            <div class="interaction-hint">
+                MOVE TO INTERACT
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             TEXT PANEL
+        ========================================== -->
+
+        <section class="info-panel">
+
+            <header class="system-header">
+
+                <div>
+                    <p class="eyebrow">SYSTEM BUILD / V1</p>
+
+                    <h1>CONTACT</h1>
+                </div>
+
+                <p class="version">
+                    01
+                </p>
+
+            </header>
+
+
+            <div class="panel-grid">
+
+                <!-- RULES -->
+
+                <section class="panel-section">
+
+                    <p class="section-label">
+                        RULES
+                    </p>
+
+                    <ul class="rules">
+
+                        <li>
+                            The sigil follows the user's movement.
+                        </li>
+
+                        <li>
+                            Objects react when the sigil makes contact.
+                        </li>
+
+                        <li>
+                            Contact pushes objects away from the sigil.
+                        </li>
+
+                        <li>
+                            Contact creates a temporary cyan glow.
+                        </li>
+
+                    </ul>
+
+                </section>
+
+
+                <!-- CONTROLS -->
+
+                <section class="panel-section">
+
+                    <p class="section-label">
+                        CONTROLS
+                    </p>
+
+                    <div class="controls">
+
+                        <div class="control">
+                            <span class="control-key">
+                                MOVE
+                            </span>
+
+                            <span class="control-description">
+                                Move the mouse to control the sigil.
+                            </span>
+                        </div>
+
+                        <div class="control">
+                            <span class="control-key">
+                                HOLD
+                            </span>
+
+                            <span class="control-description">
+                                Hold the mouse to increase sigil tension.
+                            </span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- =========================================
+                 REFLECTION
+            ========================================== -->
+
+            <section class="reflection">
+
+                <p class="section-label">
+                    V1 REFLECTION
+                </p>
+
+                <div class="reflection-text">
+
+                    <p>
+                        Contact now combines the visual sigil, mouse movement,
+                        physical reaction, and atmosphere into one system.
+                        The previous tests explored these ideas separately,
+                        while this version connects them through contact.
+                        The part that feels most successful is the direct
+                        relationship between the user's movement and the
+                        objects around the sigil.
+                    </p>
+
+                    <p>
+                        The system becomes less clear when too many objects
+                        react at the same time, because the main interaction
+                        can become visually noisy. The restrained cyan glow
+                        helps keep the focus on the sigil and its immediate
+                        surroundings. In v2, I would tighten the contact
+                        response further by making the reaction more precise
+                        and localized around the point of contact.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer>
+
+        <span>CONTACT / SYSTEM BUILD V1</span>
+
+        <span>INTERACTION STUDY</span>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
